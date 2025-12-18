@@ -43,3 +43,31 @@ def test_print_named_queries(named_query):
         None,
         None,
     )
+
+
+def test_list_named_queries_wraps_long_queries(named_query):
+    """Test that \n command wraps queries longer than 100 characters."""
+    # Create a query longer than 100 characters
+    long_query = "select " + ", ".join([f"column_{i}" for i in range(30)]) + " from table_name"
+    assert len(long_query) > 100, "Test query should be longer than 100 characters"
+
+    PGSpecial().execute(None, f"\\ns long_test {long_query}")
+    assert "long_test" in NamedQueries.instance.list()
+
+    # Execute \n to list all named queries
+    result = PGSpecial().execute(None, "\\n")
+
+    # Find the long_test query in results
+    rows = result[0][1]
+    long_test_row = [row for row in rows if row[0] == "long_test"][0]
+
+    # Verify the query is wrapped with newlines
+    assert "\n" in long_test_row[1], "Long query should contain newlines for wrapping"
+
+    # Verify each line is <= 100 characters
+    lines = long_test_row[1].split("\n")
+    for line in lines:
+        assert len(line) <= 100, f"Each line should be <= 100 chars, got {len(line)}"
+
+    # Verify the wrapped query matches the original when newlines are removed
+    assert long_test_row[1].replace("\n", "") == long_query

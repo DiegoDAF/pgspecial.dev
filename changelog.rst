@@ -1,3 +1,12 @@
+Upcoming
+========
+
+Features:
+---------
+* Wrap long queries in ``\n`` command output at 100 characters per line for better table display.
+  Queries longer than 100 characters will automatically wrap to multiple lines within the table cell.
+  This improves readability when listing named queries with long SQL statements while preserving
+  the complete query text.
 
 2.2.1 (2025-04-27)
 ==================
