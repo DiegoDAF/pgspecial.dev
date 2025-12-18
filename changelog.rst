@@ -1,3 +1,11 @@
+Upcoming
+========
+
+Features:
+---------
+* Truncate long queries in ``\n`` command output to 80 characters for better table display.
+  Queries longer than 80 characters will show "..." at the end.
+  This improves readability when listing named queries with long SQL statements.
 
 2.2.1 (2025-04-27)
 ==================

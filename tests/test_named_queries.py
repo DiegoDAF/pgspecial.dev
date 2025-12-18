@@ -43,3 +43,27 @@ def test_print_named_queries(named_query):
         None,
         None,
     )
+
+
+def test_list_named_queries_truncates_long_queries(named_query):
+    """Test that \n command truncates queries longer than 80 characters."""
+    # Create a query longer than 80 characters
+    long_query = "select " + ", ".join([f"column_{i}" for i in range(20)]) + " from table_name"
+    assert len(long_query) > 80, "Test query should be longer than 80 characters"
+
+    PGSpecial().execute(None, f"\\ns long_test {long_query}")
+    assert "long_test" in NamedQueries.instance.list()
+
+    # Execute \n to list all named queries
+    result = PGSpecial().execute(None, "\\n")
+
+    # Find the long_test query in results
+    rows = result[0][1]
+    long_test_row = [row for row in rows if row[0] == "long_test"][0]
+
+    # Verify the query is truncated to 80 characters
+    assert len(long_test_row[1]) == 80, f"Query should be truncated to 80 chars, got {len(long_test_row[1])}"
+    assert long_test_row[1].endswith("..."), "Truncated query should end with '...'"
+
+    # Verify the truncated query is the first 77 chars + "..."
+    assert long_test_row[1] == long_query[:77] + "..."

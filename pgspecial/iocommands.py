@@ -264,7 +264,14 @@ def list_named_queries(verbose):
         headers = ["Name"]
     else:
         headers = ["Name", "Query"]
-        rows = [[r, NamedQueries.instance.get(r)] for r in NamedQueries.instance.list()]
+        # Truncate queries to 80 characters for better table display
+        max_query_len = 80
+        rows = []
+        for name in NamedQueries.instance.list():
+            query = NamedQueries.instance.get(name)
+            if len(query) > max_query_len:
+                query = query[:max_query_len - 3] + "..."
+            rows.append([name, query])
 
     if not rows:
         status = NamedQueries.instance.usage
