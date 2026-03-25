@@ -8,6 +8,13 @@ Features:
   This improves readability when listing named queries with long SQL statements while preserving
   the complete query text.
 
+Unreleased
+==========
+
+Bug fixes:
+----------
+* Include relation type/name titles in `\d` and `\d+` describe output so wildcard describe results retain per-relation context.
+
 2.2.1 (2025-04-27)
 ==================
 
